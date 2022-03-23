@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="games.webmanifest">
+    <script
+    src="https://code.jquery.com/jquery-3.6.0.js"
+    integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
+    crossorigin="anonymous"></script>
+
+    <title>Choose character</title>
+</head>
+<body>
+<section style="text-align: center;top: 0;position: absolute;left: 0;right: 0;">
+    <a href="/">
+        <img src="/among_us_logo.webp" style="
+        height: 97px;
+        margin: 40px 0;">
+    </a>
+</section>
+
+<section style="text-align: center;top: 120px;position: absolute;left: 0;right: 0;">
+    <p id="gameName" style="font-family: Arial;color: white; font-size: 36px;">Название лобби</p>
+    <p style="font-family: Arial;color: white; font-size: 42px; margin-bottom: 0px;">Выбор персонажа</p>
+
+<form>
+    <input id="playerName" style="margin-top: 25px;" type="text" placeholder="Имя персонажа">
+    <input id="lobbyID" type="hidden">
+    
+    <select style="margin-top: 25px; width: 304px; text-align: center;" name="" id="playerColor">
+        <option selected disabled>Цвет персонажа</option>
+        <option value="1">Красный</option>
+        <option value="2">Оранжевый</option>
+        <option value="3">Коричневый</option>
+        <option value="4">Желтый</option>
+        <option value="5">Салатовый</option>
+        <option value="6">Зеленый</option>
+        <option value="7">Голубой</option>
+        <option value="8">Синий</option>
+        <option value="9">Розовый</option>
+        <option value="10">Фиолетовый</option>
+        <option value="11">Черный</option>
+        <option value="12">Белый</option>
+    </select>
+
+    <button type="submit" style="margin-top: 25px;">Перейти в лобби</button>
+</form>
+
+</section>
+<a href="/">
+    <button style="position: absolute; bottom: 50px; left: 0; right: 0; margin: 0 100px;">Отмена</button>
+</a>
+
+<script>
+    let gameName = localStorage.getItem('amongus-gameName');
+    let lobbyID = localStorage.getItem('amongus-gameCode');
+    $("#gameName").text(gameName);
+    $("#lobbyID").val(lobbyID);
+
+    $("form").submit(function (event) {
+        var formData = {
+            name: $("#playerName").val(),
+            color: $("#playerColor").val(),
+            lobbyID: $("#lobbyID").val(),
+        };
+    
+        $.ajax({
+            type: "POST",
+            url: "http://api.board-game.space/api/among-us/player-char",
+            data: formData,
+            dataType: "json",
+            encode: true,
+        }).done(function (data) {
+            if ( data.lobby_id ) {
+                localStorage.setItem('amongus-playerColor', data.color);
+                localStorage.setItem('amongus-playerName', data.name);
+                window.location.href = "/lobby.html";
+            }
+        });
+    
+        event.preventDefault();
+    });
+</script>
+    
+</body>
+</html>

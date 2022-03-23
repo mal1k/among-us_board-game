@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="games.webmanifest">
+    <script
+    src="https://code.jquery.com/jquery-3.6.0.js"
+    integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
+    crossorigin="anonymous"></script>
+    
+    <title>Enter code</title>
+</head>
+<body>
+
+<section style="text-align: center;top: 0;position: absolute;left: 0;right: 0;">
+    <a href="/">
+        <img src="/among_us_logo.webp" style="
+        height: 97px;
+        margin: 40px 0;">
+    </a>
+</section>
+
+<section style="text-align: center;top: 120px;position: absolute;left: 0;right: 0;">
+    <p style="font-family: Arial;color: white; font-size: 42px;">Введите код</p>
+    <form action="#">
+        <div class="d-flex mb-3">
+            <input id="code1" type="tel" maxlength="1" pattern="[0-9]" class="form-control">
+            <input id="code2" type="tel" maxlength="1" pattern="[0-9]" class="form-control">
+            <input id="code3" type="tel" maxlength="1" pattern="[0-9]" class="form-control">
+            <input id="code4" type="tel" maxlength="1" pattern="[0-9]" class="form-control">
+        </div>
+        <button type="submit" style="margin-top: 25px;">Войти в лобби</button>
+    </form>
+
+</section>
+<a href="/">
+    <button style="position: absolute; bottom: 50px; left: 0; right: 0; margin: 0 100px;">Отмена</button>
+</a>
+    
+<script>
+const form = document.querySelector('form')
+const inputs = form.querySelectorAll('input')
+const KEYBOARDS = {
+  backspace: 8,
+  arrowLeft: 37,
+  arrowRight: 39,
+}
+
+function handleInput(e) {
+  const input = e.target
+  const nextInput = input.nextElementSibling
+  if (nextInput && input.value) {
+    nextInput.focus()
+    if (nextInput.value) {
+      nextInput.select()
+    }
+  }
+}
+
+function handlePaste(e) {
+  e.preventDefault()
+  const paste = e.clipboardData.getData('text')
+  inputs.forEach((input, i) => {
+    input.value = paste[i] || ''
+  })
+}
+
+function handleBackspace(e) { 
+  const input = e.target
+  if (input.value) {
+    input.value = ''
+    return
+  }
+  
+  input.previousElementSibling.focus()
+}
+
+function handleArrowLeft(e) {
+  const previousInput = e.target.previousElementSibling
+  if (!previousInput) return
+  previousInput.focus()
+}
+
+function handleArrowRight(e) {
+  const nextInput = e.target.nextElementSibling
+  if (!nextInput) return
+  nextInput.focus()
+}
+
+form.addEventListener('input', handleInput)
+inputs[0].addEventListener('paste', handlePaste)
+
+inputs.forEach(input => {
+  input.addEventListener('focus', e => {
+    setTimeout(() => {
+      e.target.select()
+    }, 0)
+  })
+  
+  input.addEventListener('keydown', e => {
+    switch(e.keyCode) {
+      case KEYBOARDS.backspace:
+        handleBackspace(e)
+        break
+      case KEYBOARDS.arrowLeft:
+        handleArrowLeft(e)
+        break
+      case KEYBOARDS.arrowRight:
+        handleArrowRight(e)
+        break
+      default:  
+    }
+  })
+})
+
+$("form").submit(function (event) {
+
+  code1 = $("#code1").val();
+  code2 = $("#code2").val();
+  code3 = $("#code3").val();
+  code4 = $("#code4").val();
+
+  code1.toString();
+  code2.toString();
+  code3.toString();
+  code4.toString();
+
+  code = code1 + code2 + code3 + code4;
+  code = parseInt(code);
+
+    var formData = {
+        lobbyID: code,
+    };
+
+    $.ajax({
+        type: "POST",
+        url: "http://api.board-game.space/api/among-us/get-lobby",
+        data: formData,
+        dataType: "json",
+        encode: true,
+    }).done(function (data) {
+        if ( data != null ) {
+          localStorage.setItem('amongus-gameCode', data.lobby_id);
+          localStorage.setItem('amongus-gameName', data.name);
+          window.location.href = "/choose_char.html";
+        } else {
+          $("#code1").val(null);
+          $("#code2").val(null);
+          $("#code3").val(null);
+          $("#code4").val(null);
+        }
+    });
+
+    event.preventDefault();
+});
+
+</script>
+
+</body>
+</html>

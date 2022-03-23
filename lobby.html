@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="games.webmanifest">
+    <script
+    src="https://code.jquery.com/jquery-3.6.0.js"
+    integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
+    crossorigin="anonymous"></script>
+    
+    <title>Lobby</title>
+</head>
+<body>
+
+<section style="text-align: center;top: 0;position: absolute;left: 0;right: 0;">
+    <p style="font-family: Arial;color: white; font-size: 42px;">Лобби игры</p>
+    <div class="progressbarWrapper">
+        
+        <p style="
+            font-family: Arial;
+            font-size: 24px;
+            top: 0;
+            margin-top: 0px;
+            color: rgb(5, 165, 5);
+            font-weight: 600;">Прогресс бар</p>
+      <span id="greenBar" class="greenBarText" style="width: 0%"></span>
+    </div>
+</section>
+
+<!-- content -->
+    <!-- impostor -->
+    <section id="impostorSection">
+        <button style="width: 83.5%;margin-bottom: 10px;">Убить игрока</button>
+        <button style="left: 0;width: 40%;margin-right: 10px;background: #cc55ff;padding: 10px 0;">Саботаж верхнего крыла</button>
+        <button style="right: 0;width: 40%;background: #5594ff;padding: 10px 0;">Саботаж нижнего крыла</button>
+    </section>
+
+    <!-- player -->
+    <section id="playerTaskSection">
+        <p style="font-size: 24px;margin: 0;">Задания:</p>
+        <ul style="line-height: 32px;text-align: left;font-size: 18px;">
+            <li style="color: rgb(5, 165, 5);">0 этаж | Позовите детей кушать</li>
+            <li>1 этаж | Разложить нарды</li>
+            <li>2 этаж | Выбросить мусор на балконе</li>
+            <li>3 этаж | Помочь бабушке с телефоном</li>
+            <li>4 этаж | Налить воды сотруднику</li>
+            <li>5 этаж | Почистить стекла</li>
+        </ul>
+    </section>
+
+    <!-- wait til start -->
+    <section id="waitTillStartSection">
+        <p style="font-size: 24px;margin: 0;">Ожидайте начала игры</p>
+        <ul style="line-height: 32px;text-align: left;font-size: 18px;" id="playersList">
+            <!-- <li>Зеленый | mal1k</li>
+            <li>Красный | gxenya</li> -->
+        </ul>
+    </section>
+
+
+<section style="left: 0; right: 0; bottom: 50px; position: absolute; text-align: center;">
+    <button id="sosButton" style="display: none; background: #ff5555;">Экстренное совещание</button>
+    <form id="startGame">
+        <button type="submit" style="background: rgb(5, 165, 5);">Начать игру</button>
+    </form>
+    
+    <a href="/">
+        <button style="margin-top: 25px;">Выйти из игры</button>
+    </a>
+</section>
+
+<script>
+$("#startGame").submit(function (event) {
+    var formData = {
+        name: $("#name").val(),
+        impostor: $("#impostors").val(),
+    };
+
+    $.ajax({
+        type: "POST",
+        url: "http://api.board-game.space/api/among-us/start-lobby",
+        data: formData,
+        dataType: "json",
+        encode: true,
+    }).done(function (data) {
+            $("#waitTillStartSection").hide();
+            $("#playerTaskSection").show();
+
+            $("#startGame").hide();
+            $("#sosButton").show();
+        console.log(data);
+    });
+
+    event.preventDefault();
+});
+
+
+var colors = {
+    1: 'Красный',
+    2: 'Оранжевый',
+    3: 'Коричневый',
+    4: 'Желтый',
+    5: 'Салатовый',
+    6: 'Зеленый',
+    7: 'Голубой',
+    8: 'Синий',
+    9: 'Розовый',
+    10: 'Фиолетовый',
+    11: 'Черный',
+    12: 'Белый'
+}
+
+let lobbyID = localStorage.getItem('amongus-gameCode');
+let impostor = $("#impostorSection");
+let player = $("#playerTaskSection");
+let notStarted = $("#waitTillStartSection");
+
+function fetchdata(){
+var formData = {
+    lobbyID: lobbyID,
+};
+var array = [];
+var new_array = [];
+
+ $.ajax({
+    type: "POST",
+    url: "http://api.board-game.space/api/among-us/get-players",
+    data: formData,
+    dataType: "json",
+    encode: true,
+
+  success: function(data){
+      $("#playersList").empty();
+      $.each(data, function( index, value ) {
+        new_array.push(value.id);
+        $("#playersList").append("<li>" + colors[value.color] + " | " + value.name + "</li>");
+    });
+  },
+  complete:function(data){
+   array = new_array;
+   setTimeout(fetchdata,2000);
+  }
+ });
+}
+
+$(document).ready(function(){
+ setTimeout(fetchdata,0);
+});
+
+
+function move() {
+  let elem = document.getElementById("greenBar");
+  let stepValue = 20;
+  let id = setInterval(frame, 500);
+
+  function frame() {
+    if (stepValue >= 100) {
+      clearInterval(id);
+    } else {
+      elem.style.width = stepValue + 10 + "%";
+      elem.innerHTML = stepValue + 10 + "%";
+      stepValue = stepValue + 10;
+    }
+  }
+}
+
+</script>
+    
+</body>
+</html>

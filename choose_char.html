@@ -34,18 +34,18 @@
     
     <select style="margin-top: 25px; width: 304px; text-align: center;" name="" id="playerColor">
         <option selected disabled>Цвет персонажа</option>
-        <option value="1">Красный</option>
-        <option value="2">Оранжевый</option>
-        <option value="3">Коричневый</option>
-        <option value="4">Желтый</option>
-        <option value="5">Салатовый</option>
-        <option value="6">Зеленый</option>
-        <option value="7">Голубой</option>
-        <option value="8">Синий</option>
-        <option value="9">Розовый</option>
-        <option value="10">Фиолетовый</option>
-        <option value="11">Черный</option>
-        <option value="12">Белый</option>
+        <option id="color1" value="1">Красный</option>
+        <option id="color2" value="2">Оранжевый</option>
+        <option id="color3" value="3">Коричневый</option>
+        <option id="color4" value="4">Желтый</option>
+        <option id="color5" value="5">Салатовый</option>
+        <option id="color6" value="6">Зеленый</option>
+        <option id="color7" value="7">Голубой</option>
+        <option id="color8" value="8">Синий</option>
+        <option id="color9" value="9">Розовый</option>
+        <option id="color10" value="10">Фиолетовый</option>
+        <option id="color11" value="11">Черный</option>
+        <option id="color12" value="12">Белый</option>
     </select>
 
     <button type="submit" style="margin-top: 25px;">Перейти в лобби</button>
@@ -84,6 +84,31 @@
         });
     
         event.preventDefault();
+    });
+
+function fetchdata(){
+    var formData = {
+        lobbyID: lobbyID,
+    };
+    $.ajax({
+        type: "POST",
+        url: "http://api.board-game.space/api/among-us/get-players",
+        data: formData,
+        dataType: "json",
+        encode: true,
+        success: function(data){
+            $.each(data, function( index, value ) {
+                $("#color"+value.color).attr('disabled', 'disabled');
+            });
+        },
+        complete:function(data){
+            setTimeout(fetchdata,1000);
+        }
+    });
+}
+
+    $(document).ready(function(){
+        setTimeout(fetchdata,0);
     });
 </script>
     

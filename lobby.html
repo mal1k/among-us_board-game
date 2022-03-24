@@ -18,7 +18,9 @@
 <body>
 
 <section style="text-align: center;top: 0;position: absolute;left: 0;right: 0;">
-    <p style="font-family: Arial;color: white; font-size: 42px;">Лобби игры</p>
+    <p style="font-family: Arial;color: white; font-size: 42px;">Лобби игры
+        <p style="font-family: Arial;color: white;font-size: 18px;position: absolute;top: 5px;left: 0;right: 0;">Код игры: <span id="gameCode"></span></p>
+    </p>
     <div class="progressbarWrapper">
         
         <p style="
@@ -54,11 +56,9 @@
     </section>
 
     <!-- wait til start -->
-    <section id="waitTillStartSection">
+    <section id="waitTillStartSection" style="height: 45%; overflow-y: auto;">
         <p style="font-size: 24px;margin: 0;">Ожидайте начала игры</p>
         <ul style="line-height: 32px;text-align: left;font-size: 18px;" id="playersList">
-            <!-- <li>Зеленый | mal1k</li>
-            <li>Красный | gxenya</li> -->
         </ul>
     </section>
 
@@ -75,6 +75,16 @@
 </section>
 
 <script>
+let lobbyID = localStorage.getItem('amongus-gameCode');
+let playerName = localStorage.getItem('amongus-playerName');
+let impostor = $("#impostorSection");
+let player = $("#playerTaskSection");
+let notStarted = $("#waitTillStartSection");
+let startGameButton = $("#startGame");
+let sosButton = $("#sosButton");
+
+$("#gameCode").text(lobbyID);
+
 $("#startGame").submit(function (event) {
     var formData = {
         name: $("#name").val(),
@@ -88,12 +98,11 @@ $("#startGame").submit(function (event) {
         dataType: "json",
         encode: true,
     }).done(function (data) {
-            $("#waitTillStartSection").hide();
-            $("#playerTaskSection").show();
+        notStarted.hide();
+        player.show();
 
-            $("#startGame").hide();
-            $("#sosButton").show();
-        console.log(data);
+        startGameButton.hide();
+        sosButton.show();
     });
 
     event.preventDefault();
@@ -115,17 +124,24 @@ var colors = {
     12: 'Белый'
 }
 
-let lobbyID = localStorage.getItem('amongus-gameCode');
-let impostor = $("#impostorSection");
-let player = $("#playerTaskSection");
-let notStarted = $("#waitTillStartSection");
-
 function fetchdata(){
 var formData = {
     lobbyID: lobbyID,
 };
 var array = [];
 var new_array = [];
+
+$.ajax({
+    type: "POST",
+    url: "http://api.board-game.space/api/among-us/get-lobby",
+    data: formData,
+    dataType: "json",
+    encode: true,
+
+    success: function(data){
+      localStorage.setItem('amongus-gameStatus', data.started);
+    }
+});
 
  $.ajax({
     type: "POST",
@@ -134,18 +150,29 @@ var new_array = [];
     dataType: "json",
     encode: true,
 
-  success: function(data){
-      $("#playersList").empty();
-      $.each(data, function( index, value ) {
-        new_array.push(value.id);
-        $("#playersList").append("<li>" + colors[value.color] + " | " + value.name + "</li>");
-    });
-  },
-  complete:function(data){
-   array = new_array;
-   setTimeout(fetchdata,2000);
-  }
+    success: function(data){
+        $("#playersList").empty();
+        let gameStatus = localStorage.getItem('amongus-gameStatus');
+        $.each(data, function( index, value ) {
+            $("#playersList").append("<li>" + colors[value.color] + " | " + value.name + "</li>");
+            if ( gameStatus == 1 )
+                if ( value.name == playerName )
+                    if ( value.is_impostor == 1 ) {
+                        notStarted.hide();
+                        player.hide();
+                        impostor.show();
+                    } else {
+                        notStarted.hide();
+                        impostor.hide();
+                        player.show();
+                    }
+                });
+    },
+    complete:function(data){
+      setTimeout(fetchdata,1000);
+    }
  });
+
 }
 
 $(document).ready(function(){

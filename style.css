@@ -138,3 +138,10 @@ button:active {
     position: absolute;
     text-align: center;
 }
+
+@media (max-height: 620px) {
+    #impostorSection, #playerTaskSection, #waitTillStartSection {
+        height: 250px;
+        overflow-y: auto;
+    }
+}

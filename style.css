@@ -45,7 +45,7 @@ button:active {
     max-width: 80%;
     display: block;
     margin: auto;
-    margin-top: -4vh;
+    margin-top: 25px;
     margin-bottom: 5vh;
     position: relative;
     background: rgb(24 43 24);
@@ -120,7 +120,7 @@ button:active {
     padding: 15px 0;
     left: 0;
     right: 0;
-    top: 160px;
+    top: 100px;
     position: absolute;
     text-align: center;
 }
@@ -134,7 +134,7 @@ button:active {
     padding: 15px 0;
     left: 0;
     right: 0;
-    top: 160px;
+    top: 100px;
     position: absolute;
     text-align: center;
 }

@@ -18,7 +18,7 @@
 <body>
 
 <section style="text-align: center;top: 0;position: absolute;left: 0;right: 0;">
-    <p style="font-family: Arial;color: white; font-size: 42px;">Лобби игры
+    <p id="lobbyName" style="font-family: Arial;color: white;font-size: 18px;margin-top: 3px;">Лобби игры
         <p style="font-family: Arial;color: white;font-size: 18px;position: absolute;top: 5px;left: 0;right: 0;">Код игры: <span id="gameCode"></span></p>
     </p>
     <div class="progressbarWrapper">
@@ -63,20 +63,21 @@
     </section>
 
 
-<section style="left: 0; right: 0; bottom: 50px; position: absolute; text-align: center;">
+<section style="left: 0;right: 0;bottom: 10px;position: absolute;text-align: center;">
     <button id="sosButton" style="display: none; background: #ff5555;">Экстренное совещание</button>
     <form id="startGame">
         <button type="submit" style="background: rgb(5, 165, 5);">Начать игру</button>
     </form>
     
     <a href="/">
-        <button style="margin-top: 25px;">Выйти из игры</button>
+        <button style="margin-top: 10px; font-size: 16px;">Выйти из игры</button>
     </a>
 </section>
 
 <script>
 let lobbyID = localStorage.getItem('amongus-gameCode');
 let playerName = localStorage.getItem('amongus-playerName');
+let gameName = localStorage.getItem('amongus-gameName');
 let impostor = $("#impostorSection");
 let player = $("#playerTaskSection");
 let notStarted = $("#waitTillStartSection");
@@ -84,6 +85,7 @@ let startGameButton = $("#startGame");
 let sosButton = $("#sosButton");
 
 $("#gameCode").text(lobbyID);
+$("#lobbyName").text(gameName);
 
 $("#startGame").submit(function (event) {
     var formData = {

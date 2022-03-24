@@ -37,7 +37,23 @@
 <!-- content -->
     <!-- impostor -->
     <section id="impostorSection">
-        <button style="width: 83.5%;margin-bottom: 10px;">Убить игрока</button>
+        <!-- <button style="width: 83.5%;margin-bottom: 10px;">Убить игрока</button> -->
+        <select style="width: 83.5%;margin-bottom: 10px;width: 90%;text-align: center;" name="" id="playerColor">
+            <option selected disabled>Убить игрока</option>
+            <option id="color1" value="1">Красный</option>
+            <option id="color2" value="2">Оранжевый</option>
+            <option id="color3" value="3">Коричневый</option>
+            <option id="color4" value="4">Желтый</option>
+            <option id="color5" value="5">Салатовый</option>
+            <option id="color6" value="6">Зеленый</option>
+            <option id="color7" value="7">Голубой</option>
+            <option id="color8" value="8">Синий</option>
+            <option id="color9" value="9">Розовый</option>
+            <option id="color10" value="10">Фиолетовый</option>
+            <option id="color11" value="11">Черный</option>
+            <option id="color12" value="12">Белый</option>
+        </select>
+
         <button style="left: 0;width: 40%;margin-right: 10px;background: #cc55ff;padding: 10px 0;">Саботаж верхнего крыла</button>
         <button style="right: 0;width: 40%;background: #5594ff;padding: 10px 0;">Саботаж нижнего крыла</button>
     </section>
@@ -58,7 +74,7 @@
 
 
 <section style="left: 0;right: 0;bottom: 10px;position: absolute;text-align: center;">
-    <button id="sosButton" style="font-size: 18px; display: none; background: #ff5555;">Экстренное совещание</button>
+    <button id="sosButton" style="width: 80%;font-size: 18px;background: rgb(255, 85, 85);">Экстренное совещание</button>
     <form id="startGame">
         <button type="submit" style="background: rgb(5, 165, 5);">Начать игру</button>
     </form>
@@ -75,6 +91,37 @@ let player = $("#playerTaskSection");
 let notStarted = $("#waitTillStartSection");
 let startGameButton = $("#startGame");
 let sosButton = $("#sosButton");
+
+sosButton.click(function (event) {
+    var formData = {
+        text: "Начато экстренное совещание",
+        name: gameName,
+    };
+
+    if (! sosButton.hasClass('pause') ) {
+        $.ajax({
+            type: "POST",
+            url: "http://api.board-game.space/api/among-us/send-telegram",
+            data: formData,
+            dataType: "json",
+            encode: true,
+        }).done(function (data) {
+            jQuery(sosButton).addClass("pause");
+            var _Seconds = 120;
+            int = setInterval(function() {
+            if (_Seconds > 0) {
+                _Seconds--; // вычитаем 1
+                sosButton.text(_Seconds);
+            } else {
+                jQuery(sosButton).removeClass("pause");
+                clearInterval(int); // очищаем интервал, чтобы он не продолжал работу при _Seconds = 0
+                sosButton.text("Экстренное совещание");
+            }
+            }, 1000);
+        });
+    }
+
+});
 
 $("#gameCode").text(lobbyID);
 $("#lobbyName").text(gameName);

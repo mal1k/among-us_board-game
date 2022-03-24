@@ -87,6 +87,7 @@ $("#gameCode").text(lobbyID);
 
 $("#startGame").submit(function (event) {
     var formData = {
+        lobbyID: lobbyID,
         name: $("#name").val(),
         impostor: $("#impostors").val(),
     };
@@ -155,8 +156,8 @@ $.ajax({
         let gameStatus = localStorage.getItem('amongus-gameStatus');
         $.each(data, function( index, value ) {
             $("#playersList").append("<li>" + colors[value.color] + " | " + value.name + "</li>");
-            if ( gameStatus == 1 )
-                if ( value.name == playerName )
+            if ( gameStatus == 1 ) {
+                if ( value.name == playerName ) {
                     if ( value.is_impostor == 1 ) {
                         notStarted.hide();
                         player.hide();
@@ -166,7 +167,11 @@ $.ajax({
                         impostor.hide();
                         player.show();
                     }
-                });
+                    startGameButton.hide();
+                    sosButton.show();
+                }
+            }
+        });
     },
     complete:function(data){
       setTimeout(fetchdata,1000);

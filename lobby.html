@@ -45,13 +45,7 @@
     <!-- player -->
     <section id="playerTaskSection">
         <p style="font-size: 24px;margin: 0;">Задания:</p>
-        <ul style="line-height: 32px;text-align: left;font-size: 18px;">
-            <li style="color: rgb(5, 165, 5);">0 этаж | Позовите детей кушать</li>
-            <li>1 этаж | Разложить нарды</li>
-            <li>2 этаж | Выбросить мусор на балконе</li>
-            <li>3 этаж | Помочь бабушке с телефоном</li>
-            <li>4 этаж | Налить воды сотруднику</li>
-            <li>5 этаж | Почистить стекла</li>
+        <ul id="playerTasksList" style="line-height: 32px;text-align: left;font-size: 18px;">
         </ul>
     </section>
 
@@ -147,6 +141,7 @@ var colors = {
 function fetchdata(){
 var formData = {
     lobbyID: lobbyID,
+    name: playerName,
 };
 var array = [];
 var new_array = [];
@@ -191,11 +186,44 @@ $.ajax({
                 }
             }
         });
+    }
+ });
+
+ $.ajax({
+    type: "POST",
+    url: "http://api.board-game.space/api/among-us/get-tasks",
+    data: formData,
+    dataType: "json",
+    encode: true,
+
+    success: function(data){
+      $("#playerTasksList").empty();
+      $.each(data, function( index, value ) {
+          if ( value.done )
+            $("#playerTasksList").append("<li style='color: rgb(5, 165, 5);'>" + value.task + "</li>");
+            $("#playerTasksList").append("<li>" + value.task + "</li>");
+
+            // if ( gameStatus == 1 ) {
+            //     if ( value.name == playerName ) {
+            //         if ( value.is_impostor == 1 ) {
+            //             notStarted.hide();
+            //             player.hide();
+            //             impostor.show();
+            //         } else {
+            //             notStarted.hide();
+            //             impostor.hide();
+            //             player.show();
+            //         }
+            //         startGameButton.hide();
+            //         sosButton.show();
+            //     }
+            // }
+        });
     },
     complete:function(data){
       setTimeout(fetchdata,1000);
     }
- });
+});
 
 }
 

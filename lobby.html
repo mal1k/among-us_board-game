@@ -350,8 +350,7 @@ $.ajax({
     encode: true,
 
     success: function(data){
-    //   var progressBar = Math.round(data);
-      var progressBar = 100;
+      var progressBar = Math.round(data);
       if ( progressBar > 0 ) {
           $("#greenBar").width(progressBar + '%');
           $("#greenBar").text(progressBar + '%');

@@ -88,7 +88,7 @@ sabotage0.click(function (event) {
         sabotage0.text(480);
     }
     var formData = {
-        text: "Начался саботаж нижнего крыла (0 этаж)",
+        text: "❗️Начался саботаж нижнего ⬇️ крыла (0 этаж)",
         name: playerName,
     };
 
@@ -106,7 +106,7 @@ sabotage0.click(function (event) {
             if (_Seconds > 0) {
                 if (_Seconds == 300) {
                     var formData = {
-                        text: "Если нет 2 лайков - вы проиграли! (0 этаж)",
+                        text: "⚠️ Если нет 2 лайков - вы проиграли! (0 этаж)",
                         name: playerName,
                     };
 
@@ -136,7 +136,7 @@ sabotage1.click(function (event) {
         sabotage1.text(480);
     }
     var formData = {
-        text: "Начался саботаж верхнего крыла (7 этаж)",
+        text: "❗️Начался саботаж верхнего ⬆️ крыла (7 этаж)",
         name: playerName,
     };
 
@@ -154,7 +154,7 @@ sabotage1.click(function (event) {
             if (_Seconds > 0) {
                 if (_Seconds == 300) {
                     var formData = {
-                        text: "Если нет 2 лайков - вы проиграли! (7 этаж)",
+                        text: "⚠️ Если нет 2 лайков - вы проиграли! (7 этаж)",
                         name: playerName,
                     };
 
@@ -181,7 +181,7 @@ sabotage1.click(function (event) {
 
 sosButton.click(function (event) {
     var formData = {
-        text: "Начато экстренное совещание",
+        text: "📢 Начато экстренное совещание",
         name: playerName,
     };
 
@@ -328,93 +328,94 @@ $.ajax({
 
     success: function(data){
       $("#playerTasksList").empty();
-      if ( $.isArray(data) ) {
+        if ( $.isArray(data) ) {
           $.each(data, function( index, value ) {
                 if ( value.done )
-                $("#playerTasksList").append("<li style='color: rgb(5, 165, 5);'>" + value.task + "</li>");
-              else
-                $("#playerTasksList").append("<li>" + value.task + "</li>");
+                    $("#playerTasksList").append("<li style='color: rgb(5, 165, 5);'>" + value.task + "</li>");
+                else
+                    $("#playerTasksList").append("<li>" + value.task + "</li>");
           });
-      }
-    }
-});
+        }
 
-var formData = {
-    lobbyID: lobbyID,
-    name: playerName,
-    getProgress: true,
-};
+        var formData = {
+            lobbyID: lobbyID,
+            name: playerName,
+            getProgress: true,
+        };
 
-$.ajax({
-    type: "POST",
-    url: "http://api.board-game.space/api/among-us/get-tasks",
-    data: formData,
-    dataType: "json",
-    encode: true,
+        $.ajax({
+            type: "POST",
+            url: "http://api.board-game.space/api/among-us/get-tasks",
+            data: formData,
+            dataType: "json",
+            encode: true,
 
-    success: function(data){
-      var progressBar = Math.round(data);
-      if ( progressBar > 0 ) {
-          $("#greenBar").width(progressBar + '%');
-          $("#greenBar").text(progressBar + '%');
-          $("#progressBarText").text(null);
+            success: function(data){
+            var progressBar = Math.round(data);
+            if ( progressBar > 0 ) {
+                $("#greenBar").width(progressBar + '%');
+                $("#greenBar").text(progressBar + '%');
+                $("#progressBarText").text(null);
 
-          if ( progressBar == 100 ) {
-            var formData = {
-                lobbyID: lobbyID,
-                name: playerName,
-            };
-            $.ajax({
-                type: "POST",
-                url: "http://api.board-game.space/api/among-us/get-lobby",
-                data: formData,
-                dataType: "json",
-                encode: true,
+                if ( progressBar == 100 ) {
+                    var formData = {
+                        lobbyID: lobbyID,
+                        name: playerName,
+                    };
+                    $.ajax({
+                        type: "POST",
+                        url: "http://api.board-game.space/api/among-us/get-lobby",
+                        data: formData,
+                        dataType: "json",
+                        encode: true,
 
-                success: function(data){
-                    if ( data.started == 1) {
-                        var formData = {
-                            text: "Игра завершена. Победа за командой!",
-                            name: playerName,
-                        };
-                        $.ajax({
-                            type: "POST",
-                            url: "http://api.board-game.space/api/among-us/send-telegram",
-                            data: formData,
-                            dataType: "json",
-                            encode: true,
+                        success: function(data){
+                            if ( data.started == 1) {
+                                var formData = {
+                                    text: "🏁 Игра завершена. Победа за командой! 👨‍👩‍👧‍👦",
+                                    name: playerName,
+                                };
+                                $.ajax({
+                                    type: "POST",
+                                    url: "http://api.board-game.space/api/among-us/send-telegram",
+                                    data: formData,
+                                    dataType: "json",
+                                    encode: true,
 
-                            success: function(data){
-                                $("#playerTasksList").empty();
-                                $("#startGame").hide();
-                                $("#impostorSection").hide();
-                                $("#waitTillStartSection").hide();
-                                $("#playerTaskSection").show();
-                                $("#tasksText").text('Игра завершена');
-                                $("#gameCode").text('');
+                                    success: function(data){
+                                        $("#playerTasksList").empty();
+                                        $("#startGame").hide();
+                                        $("#impostorSection").hide();
+                                        $("#waitTillStartSection").hide();
+                                        $("#playerTaskSection").show();
+                                        $("#tasksText").text('Игра завершена');
+                                        $("#gameCode").text('');
+                                    }
+                                });
+
+                                var formData = {
+                                    lobbyID: lobbyID,
+                                    name: playerName,
+                                };
+                                $.ajax({
+                                    type: "POST",
+                                    url: "http://api.board-game.space/api/among-us/end-lobby",
+                                    data: formData,
+                                    dataType: "json",
+                                    encode: true
+                                });
                             }
-                        });
+                        }
+                    });
 
-                        var formData = {
-                            lobbyID: lobbyID,
-                            name: playerName,
-                        };
-                        $.ajax({
-                            type: "POST",
-                            url: "http://api.board-game.space/api/among-us/end-lobby",
-                            data: formData,
-                            dataType: "json",
-                            encode: true
-                        });
-                    }
                 }
-            });
+            }
+            },
+            complete:function(data){
+            setTimeout(fetchdata,1000);
+            }
+        });
 
-          }
-      }
-    },
-    complete:function(data){
-      setTimeout(fetchdata,1000);
     }
 });
 
@@ -504,7 +505,7 @@ impostor.change(function() {
             if ( livePlayers.length <= 2 ) {
                 var formData = {
                     lobbyID: lobbyID,
-                    text: "Игра завершена. Победа за предателем!",
+                    text: "🏁 Игра завершена. Победа за предателем! 🥷",
                     name: playerName,
                 };
                 $.ajax({

@@ -197,7 +197,7 @@ sosButton.click(function (event) {
             var _Seconds = 120;
             int = setInterval(function() {
             if (_Seconds > 0) {
-                _Seconds--; // вычитаем 1
+                _Seconds--; 
                 sosButton.text(_Seconds);
             } else {
                 jQuery(sosButton).removeClass("pause");
@@ -328,11 +328,14 @@ $.ajax({
 
     success: function(data){
       $("#playerTasksList").empty();
-      $.each(data, function( index, value ) {
-          if ( value.done )
-            $("#playerTasksList").append("<li style='color: rgb(5, 165, 5);'>" + value.task + "</li>");
-            $("#playerTasksList").append("<li>" + value.task + "</li>");
-        });
+      if ( $.isArray(data) ) {
+          $.each(data, function( index, value ) {
+                if ( value.done )
+                $("#playerTasksList").append("<li style='color: rgb(5, 165, 5);'>" + value.task + "</li>");
+              else
+                $("#playerTasksList").append("<li>" + value.task + "</li>");
+          });
+      }
     }
 });
 
@@ -403,7 +406,6 @@ $.ajax({
                             dataType: "json",
                             encode: true
                         });
-                    
                     }
                 }
             });
@@ -439,37 +441,41 @@ function move() {
   }
 }
 
-  var formData = {
+
+// impostor kill button
+var formData = {
     lobbyID: lobbyID,
     name: playerName,
-  };
-  $.ajax({
+};
+$.ajax({
     type: "POST",
     url: "http://api.board-game.space/api/among-us/get-players",
     data: formData,
     dataType: "json",
     encode: true,
-
     success: function(data){
         $("#killPlayer").empty();
         $("#killPlayer").append("<option selected disabled>Убить игрока</option>");
         let gameStatus = localStorage.getItem('amongus-gameStatus');
         $.each(data, function( index, value ) {
+            if (! value.is_impostor == 1 )
             if ( value.died )
                 $("#killPlayer").append("<option value=" + value.id + " disabled>" + colors[value.color] + " | " + value.name + "</option>");
             else
                 $("#killPlayer").append("<option value=" + value.id + ">" + colors[value.color] + " | " + value.name + "</option>");
         });
     }
-  });
+});
 
+// impostor kill button change
 impostor.change(function() {
+  killPlayer = $("#killPlayer").val();
   $("#killPlayer").empty();
   $("#killPlayer").append("<option selected disabled>" + 120 + "</option>");
 
   var formData = {
     lobbyID: lobbyID,
-    playerID: $("#killPlayer").val(),
+    playerID: killPlayer,
   };
 
   $.ajax({
@@ -488,11 +494,51 @@ impostor.change(function() {
     encode: true,
 
     success: function(data){
+            var livePlayers = [];
+            $.each(data, function( index, value ) {
+                if ( ! value.died == 1 && ! value.is_impostor && value.id !== killPlayer )
+                    livePlayers.push(value);
+            });
+
+            // если осталось 2 и меньше игрока
+            if ( livePlayers.length <= 2 ) {
+                var formData = {
+                    lobbyID: lobbyID,
+                    text: "Игра завершена. Победа за предателем!",
+                    name: playerName,
+                };
+                $.ajax({
+                    type: "POST",
+                    url: "http://api.board-game.space/api/among-us/send-telegram",
+                    data: formData,
+                    dataType: "json",
+                    encode: true,
+
+                    success: function(data){
+                        $("#playerTasksList").empty();
+                        $("#startGame").hide();
+                        $("#impostorSection").hide();
+                        $("#waitTillStartSection").hide();
+                        $("#playerTaskSection").show();
+                        $("#tasksText").text('Игра завершена');
+                        $("#gameCode").text('');
+                    }
+                });
+                $.ajax({
+                    type: "POST",
+                    url: "http://api.board-game.space/api/among-us/end-lobby",
+                    data: formData,
+                    dataType: "json",
+                    encode: true
+                });
+            }
+
+
             jQuery($("#killPlayer")).addClass("pause");
             var _Seconds = 120;
             int = setInterval(function() {
             if (_Seconds > 0) {
-                _Seconds--; // вычитаем 1
+                _Seconds--; 
                 $("#killPlayer").empty();
                 $("#killPlayer").append("<option selected disabled>" + _Seconds + "</option>");
             } else {
@@ -511,6 +557,7 @@ impostor.change(function() {
                         $("#killPlayer").append("<option selected disabled>Убить игрока</option>");
                         let gameStatus = localStorage.getItem('amongus-gameStatus');
                         $.each(data, function( index, value ) {
+                          if (! value.is_impostor == 1 )
                             if ( value.died )
                                 $("#killPlayer").append("<option value=" + value.id + " disabled>" + colors[value.color] + " | " + value.name + "</option>");
                             else
@@ -521,15 +568,6 @@ impostor.change(function() {
 
             }
             }, 1000);
-
-        // $("#killPlayer").empty();
-        // $("#killPlayer").append("<option selected disabled>Убить игрока</option>");
-        // $.each(data, function( index, value ) {
-        //     if ( value.died )
-        //         $("#killPlayer").append("<option value=" + value.id + " disabled>" + colors[value.color] + " | " + value.name + "</option>");
-        //     else
-        //         $("#killPlayer").append("<option value=" + value.id + ">" + colors[value.color] + " | " + value.name + "</option>");
-        // });
     }
   });
 

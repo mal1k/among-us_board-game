@@ -145,3 +145,10 @@ button:active {
         overflow-y: auto;
     }
 }
+
+@media (max-height: 770px) {
+    #impostorSection, #playerTaskSection, #waitTillStartSection {
+        height: 350px;
+        overflow-y: auto;
+    }
+}

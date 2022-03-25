@@ -54,8 +54,8 @@
             <option id="color12" value="12">Белый</option>
         </select>
 
-        <button style="left: 0;width: 40%;margin-right: 10px;background: #cc55ff;padding: 10px 0;">Саботаж верхнего крыла</button>
-        <button style="right: 0;width: 40%;background: #5594ff;padding: 10px 0;">Саботаж нижнего крыла</button>
+        <button id="sabotage0" style="right: 0;width: 40%;background: #5594ff;padding: 10px 0;">Саботаж нижнего крыла</button>
+        <button id="sabotage1" style="left: 0;width: 40%;margin-right: 10px;background: #cc55ff;padding: 10px 0;">Саботаж верхнего крыла</button>
     </section>
 
     <!-- player -->
@@ -74,7 +74,7 @@
 
 
 <section style="left: 0;right: 0;bottom: 10px;position: absolute;text-align: center;">
-    <button id="sosButton" style="width: 80%;font-size: 18px;background: rgb(255, 85, 85);">Экстренное совещание</button>
+    <button id="sosButton" style="display: none;width: 80%;font-size: 18px;background: rgb(255, 85, 85);">Экстренное совещание</button>
     <form id="startGame">
         <button type="submit" style="background: rgb(5, 165, 5);">Начать игру</button>
     </form>
@@ -91,11 +91,109 @@ let player = $("#playerTaskSection");
 let notStarted = $("#waitTillStartSection");
 let startGameButton = $("#startGame");
 let sosButton = $("#sosButton");
+let sabotage0 = $("#sabotage0");
+let sabotage1 = $("#sabotage1");
+
+sabotage0.click(function (event) {
+    if (! sabotage0.hasClass('pause') ) {
+        sabotage0.text(480);
+    }
+    var formData = {
+        text: "Начался саботаж нижнего крыла (0 этаж)",
+        name: playerName,
+    };
+
+    if (! sabotage0.hasClass('pause') ) {
+        $.ajax({
+            type: "POST",
+            url: "http://api.board-game.space/api/among-us/send-telegram",
+            data: formData,
+            dataType: "json",
+            encode: true,
+        }).done(function (data) {
+            jQuery(sabotage0).addClass("pause");
+            var _Seconds = 480;
+            int = setInterval(function() {
+            if (_Seconds > 0) {
+                if (_Seconds == 300) {
+                    var formData = {
+                        text: "Если нет 2 лайков - вы проиграли! (0 этаж)",
+                        name: playerName,
+                    };
+
+                    $.ajax({
+                        type: "POST",
+                        url: "http://api.board-game.space/api/among-us/send-telegram",
+                        data: formData,
+                        dataType: "json",
+                        encode: true,
+                    });
+
+                }
+                _Seconds--;
+                sabotage0.text(_Seconds);
+            } else {
+                jQuery(sabotage0).removeClass("pause");
+                clearInterval(int);
+                sabotage0.text("Саботаж нижнего крыла");
+            }
+            }, 1000);
+        });
+    }
+});
+
+sabotage1.click(function (event) {
+    if (! sabotage1.hasClass('pause') ) {
+        sabotage1.text(480);
+    }
+    var formData = {
+        text: "Начался саботаж верхнего крыла (7 этаж)",
+        name: playerName,
+    };
+
+    if (! sabotage1.hasClass('pause') ) {
+        $.ajax({
+            type: "POST",
+            url: "http://api.board-game.space/api/among-us/send-telegram",
+            data: formData,
+            dataType: "json",
+            encode: true,
+        }).done(function (data) {
+            jQuery(sabotage1).addClass("pause");
+            var _Seconds = 480;
+            int = setInterval(function() {
+            if (_Seconds > 0) {
+                if (_Seconds == 300) {
+                    var formData = {
+                        text: "Если нет 2 лайков - вы проиграли! (7 этаж)",
+                        name: playerName,
+                    };
+
+                    $.ajax({
+                        type: "POST",
+                        url: "http://api.board-game.space/api/among-us/send-telegram",
+                        data: formData,
+                        dataType: "json",
+                        encode: true,
+                    });
+
+                }
+                _Seconds--;
+                sabotage1.text(_Seconds);
+            } else {
+                jQuery(sabotage1).removeClass("pause");
+                clearInterval(int);
+                sabotage1.text("Саботаж верхнего крыла");
+            }
+            }, 1000);
+        });
+    }
+});
 
 sosButton.click(function (event) {
     var formData = {
         text: "Начато экстренное совещание",
-        name: gameName,
+        name: playerName,
     };
 
     if (! sosButton.hasClass('pause') ) {
@@ -120,7 +218,6 @@ sosButton.click(function (event) {
             }, 1000);
         });
     }
-
 });
 
 $("#gameCode").text(lobbyID);

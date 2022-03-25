@@ -23,7 +23,7 @@
     </p>
     <div class="progressbarWrapper">
         
-        <p style="
+        <p id="progressBarText" style="
             font-family: Arial;
             font-size: 24px;
             top: 0;
@@ -38,20 +38,9 @@
     <!-- impostor -->
     <section id="impostorSection">
         <!-- <button style="width: 83.5%;margin-bottom: 10px;">Убить игрока</button> -->
-        <select style="width: 83.5%;margin-bottom: 10px;width: 90%;text-align: center;" name="" id="playerColor">
+        <select style="width: 83.5%;margin-bottom: 10px;width: 90%;text-align: center;" name="" id="killPlayer">
             <option selected disabled>Убить игрока</option>
-            <option id="color1" value="1">Красный</option>
-            <option id="color2" value="2">Оранжевый</option>
-            <option id="color3" value="3">Коричневый</option>
-            <option id="color4" value="4">Желтый</option>
-            <option id="color5" value="5">Салатовый</option>
-            <option id="color6" value="6">Зеленый</option>
-            <option id="color7" value="7">Голубой</option>
-            <option id="color8" value="8">Синий</option>
-            <option id="color9" value="9">Розовый</option>
-            <option id="color10" value="10">Фиолетовый</option>
-            <option id="color11" value="11">Черный</option>
-            <option id="color12" value="12">Белый</option>
+
         </select>
 
         <button id="sabotage0" style="right: 0;width: 40%;background: #5594ff;padding: 10px 0;">Саботаж нижнего крыла</button>
@@ -238,10 +227,7 @@ $("#startGame").submit(function (event) {
         encode: true,
     }).done(function (data) {
         notStarted.hide();
-        player.show();
-
         startGameButton.hide();
-        sosButton.show();
     });
 
     event.preventDefault();
@@ -265,7 +251,6 @@ $("#lobbyLogout").click(function (event) {
 
     event.preventDefault();
 });
-
 
 var colors = {
     1: 'Красный',
@@ -311,6 +296,7 @@ $.ajax({
 
     success: function(data){
         $("#playersList").empty();
+        
         let gameStatus = localStorage.getItem('amongus-gameStatus');
         $.each(data, function( index, value ) {
             $("#playersList").append("<li>" + colors[value.color] + " | " + value.name + "</li>");
@@ -333,7 +319,7 @@ $.ajax({
     }
  });
 
- $.ajax({
+$.ajax({
     type: "POST",
     url: "http://api.board-game.space/api/among-us/get-tasks",
     data: formData,
@@ -346,23 +332,31 @@ $.ajax({
           if ( value.done )
             $("#playerTasksList").append("<li style='color: rgb(5, 165, 5);'>" + value.task + "</li>");
             $("#playerTasksList").append("<li>" + value.task + "</li>");
-
-            // if ( gameStatus == 1 ) {
-            //     if ( value.name == playerName ) {
-            //         if ( value.is_impostor == 1 ) {
-            //             notStarted.hide();
-            //             player.hide();
-            //             impostor.show();
-            //         } else {
-            //             notStarted.hide();
-            //             impostor.hide();
-            //             player.show();
-            //         }
-            //         startGameButton.hide();
-            //         sosButton.show();
-            //     }
-            // }
         });
+    }
+});
+
+var formData = {
+    lobbyID: lobbyID,
+    name: playerName,
+    getProgress: true,
+};
+
+$.ajax({
+    type: "POST",
+    url: "http://api.board-game.space/api/among-us/get-tasks",
+    data: formData,
+    dataType: "json",
+    encode: true,
+
+    success: function(data){
+      var progressBar = Math.round(data);
+      if ( progressBar > 0 ) {
+          $("#greenBar").width(progressBar + '%');
+          $("#greenBar").text(progressBar + '%');
+          $("#progressBarText").text(null);
+      }
+        console.log( progressBar + '%' );
     },
     complete:function(data){
       setTimeout(fetchdata,1000);
@@ -391,6 +385,102 @@ function move() {
     }
   }
 }
+
+  var formData = {
+    lobbyID: lobbyID,
+    name: playerName,
+  };
+  $.ajax({
+    type: "POST",
+    url: "http://api.board-game.space/api/among-us/get-players",
+    data: formData,
+    dataType: "json",
+    encode: true,
+
+    success: function(data){
+        $("#killPlayer").empty();
+        $("#killPlayer").append("<option selected disabled>Убить игрока</option>");
+        let gameStatus = localStorage.getItem('amongus-gameStatus');
+        $.each(data, function( index, value ) {
+            if ( value.died )
+                $("#killPlayer").append("<option value=" + value.id + " disabled>" + colors[value.color] + " | " + value.name + "</option>");
+            else
+                $("#killPlayer").append("<option value=" + value.id + ">" + colors[value.color] + " | " + value.name + "</option>");
+        });
+    }
+  });
+
+impostor.change(function() {
+  $("#killPlayer").empty();
+  $("#killPlayer").append("<option selected disabled>" + 120 + "</option>");
+
+  var formData = {
+    lobbyID: lobbyID,
+    playerID: $("#killPlayer").val(),
+  };
+
+  $.ajax({
+    type: "POST",
+    url: "http://api.board-game.space/api/among-us/kill-player",
+    data: formData,
+    dataType: "json",
+    encode: true
+  });
+
+  $.ajax({
+    type: "POST",
+    url: "http://api.board-game.space/api/among-us/get-players",
+    data: formData,
+    dataType: "json",
+    encode: true,
+
+    success: function(data){
+            jQuery($("#killPlayer")).addClass("pause");
+            var _Seconds = 120;
+            int = setInterval(function() {
+            if (_Seconds > 0) {
+                _Seconds--; // вычитаем 1
+                $("#killPlayer").empty();
+                $("#killPlayer").append("<option selected disabled>" + _Seconds + "</option>");
+            } else {
+                $("#killPlayer").removeClass("pause");
+                $("#killPlayer").empty();
+                clearInterval(int);
+                $.ajax({
+                    type: "POST",
+                    url: "http://api.board-game.space/api/among-us/get-players",
+                    data: formData,
+                    dataType: "json",
+                    encode: true,
+
+                    success: function(data){
+                        $("#killPlayer").empty();
+                        $("#killPlayer").append("<option selected disabled>Убить игрока</option>");
+                        let gameStatus = localStorage.getItem('amongus-gameStatus');
+                        $.each(data, function( index, value ) {
+                            if ( value.died )
+                                $("#killPlayer").append("<option value=" + value.id + " disabled>" + colors[value.color] + " | " + value.name + "</option>");
+                            else
+                                $("#killPlayer").append("<option value=" + value.id + ">" + colors[value.color] + " | " + value.name + "</option>");
+                        });
+                    }
+                });
+
+            }
+            }, 1000);
+
+        // $("#killPlayer").empty();
+        // $("#killPlayer").append("<option selected disabled>Убить игрока</option>");
+        // $.each(data, function( index, value ) {
+        //     if ( value.died )
+        //         $("#killPlayer").append("<option value=" + value.id + " disabled>" + colors[value.color] + " | " + value.name + "</option>");
+        //     else
+        //         $("#killPlayer").append("<option value=" + value.id + ">" + colors[value.color] + " | " + value.name + "</option>");
+        // });
+    }
+  });
+
+});
 
 </script>
     

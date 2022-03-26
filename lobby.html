@@ -274,14 +274,26 @@ function fetchdata(){
         encode: true,
 
         success: function(data){
-            console.log ( data );
-            // $("#playerTasksList").empty();
-            // startGameButton.hide();
-            // $("#impostorSection").hide();
-            // $("#waitTillStartSection").hide();
-            // $("#playerTaskSection").show();
-            // $("#tasksText").text('Игра завершена');
-            // $("#gameCode").text('');
+            if ( data.started == null ) {
+                startGameButton.hide();
+                notStarted.show();
+                impostor.hide();
+                player.hide();
+            }
+            
+            if ( data.started == 1 ) {
+                console.log( 'started' );
+            }
+
+            if ( data.started == 2 ) {
+                startGameButton.hide();
+                notStarted.hide();
+                impostor.hide();
+                player.show();
+                $("#tasksText").text('Игра завершена');
+                $("#playerTasksList").empty();
+                $("#gameCode").text('');
+            }
 
             localStorage.setItem('amongus-gameStatus', data.started);
         }

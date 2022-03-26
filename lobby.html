@@ -431,30 +431,33 @@ $(document).ready(function(){
 
 // impostor kill button
 $("#killPlayer").click(function() {
-    var formData = {
-        lobbyID: lobbyID,
-        name: playerName,
-    };
-    $.ajax({
-        type: "POST",
-        url: "http://api.board-game.space/api/among-us/get-players",
-        data: formData,
-        dataType: "json",
-        encode: true,
-        success: function(data){
-            $("#killPlayer").empty();
-            $("#killPlayer").append("<option selected disabled>Убить игрока</option>");
+    if (! $("#killPlayer").hasClass('usersUpdated') ) {
+        var formData = {
+            lobbyID: lobbyID,
+            name: playerName,
+        };
+        $.ajax({
+            type: "POST",
+            url: "http://api.board-game.space/api/among-us/get-players",
+            data: formData,
+            dataType: "json",
+            encode: true,
+            success: function(data){
+                $("#killPlayer").empty();
+                $("#killPlayer").append("<option selected disabled>Убить игрока</option>");
 
-            $.each(data, function( index, value ) {
-                if ( value.is_impostor !== 1 ) {
-                    if ( value.died )
-                        $("#killPlayer").append("<option value=" + value.id + " disabled>" + colors[value.color] + " | " + value.name + "</option>");
-                    else
-                        $("#killPlayer").append("<option value=" + value.id + ">" + colors[value.color] + " | " + value.name + "</option>");
-                }
-            });
-        }
-    });
+                $.each(data, function( index, value ) {
+                    if ( value.is_impostor !== 1 ) {
+                        if ( value.died )
+                            $("#killPlayer").append("<option value=" + value.id + " disabled>" + colors[value.color] + " | " + value.name + "</option>");
+                        else
+                            $("#killPlayer").append("<option value=" + value.id + ">" + colors[value.color] + " | " + value.name + "</option>");
+                    }
+                });
+            }
+        });
+    }
+    $("#killPlayer").addClass('usersUpdated');
 });
 
 // impostor kill button change

@@ -148,7 +148,7 @@ button:active {
 
 @media (max-height: 770px) {
     #playerTaskSection, #waitTillStartSection {
-        height: 350px;
+        height: 330px;
         overflow-y: auto;
     }
 }

@@ -18,9 +18,8 @@
 <body>
 
 <section style="text-align: center;top: 0;position: absolute;left: 0;right: 0;">
-    <p id="lobbyName" style="font-family: Arial;color: white;font-size: 18px;margin-top: 3px;">Лобби игры
-        <p style="font-family: Arial;color: white;font-size: 18px;position: absolute;top: 5px;left: 0;right: 0;">Код игры: <span id="gameCode"></span></p>
-    </p>
+    <p id="lobbyName" style="font-family: Arial;color: white;font-size: 18px;margin-top: 3px;">Лобби игры</p>
+        <p id="gameCodeParagraph" style="font-family: Arial;color: white;font-size: 18px;position: absolute;top: 5px;left: 0;right: 0;">Код игры: <span id="gameCode"></span></p>
     <div class="progressbarWrapper">
         
         <p id="progressBarText" style="
@@ -71,13 +70,14 @@
 </section>
 
 <script>
-let lobbyID = localStorage.getItem('amongus-gameCode');
 let playerName = localStorage.getItem('amongus-playerName');
 let gameName = localStorage.getItem('amongus-gameName');
-let impostor = $("#impostorSection");
-let player = $("#playerTaskSection");
+let lobbyID = localStorage.getItem('amongus-gameCode');
+let gameCodeParagraph = $("#gameCodeParagraph");
 let notStarted = $("#waitTillStartSection");
 let startGameButton = $("#startGame");
+let impostor = $("#impostorSection");
+let player = $("#playerTaskSection");
 let sosButton = $("#sosButton");
 let sabotage0 = $("#sabotage0");
 let sabotage1 = $("#sabotage1");
@@ -95,7 +95,6 @@ var colors = {
     11: 'Черный',
     12: 'Белый'
 }
-
 $("#gameCode").text(lobbyID);
 $("#lobbyName").text(gameName);
 
@@ -275,6 +274,7 @@ function fetchdata(){
 
         success: function(data){
             if ( data.started == null ) {
+                gameCodeParagraph.show();
                 startGameButton.show();
                 notStarted.show();
                 sosButton.hide();
@@ -287,6 +287,7 @@ function fetchdata(){
             }
 
             if ( data.started == 2 ) {
+                gameCodeParagraph.hide();
                 startGameButton.hide();
                 notStarted.hide();
                 sosButton.hide();

@@ -502,7 +502,7 @@ impostor.change(function() {
             });
 
             // если осталось 2 и меньше игрока
-            if ( livePlayers.length <= 2 ) {
+            if ( livePlayers.length < 2 ) {
                 var formData = {
                     lobbyID: lobbyID,
                     text: "🏁 Игра завершена. Победа за предателем! 🥷",

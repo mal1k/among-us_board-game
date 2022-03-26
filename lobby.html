@@ -459,11 +459,12 @@ $.ajax({
         $("#killPlayer").append("<option selected disabled>Убить игрока</option>");
         let gameStatus = localStorage.getItem('amongus-gameStatus');
         $.each(data, function( index, value ) {
-            if (! value.is_impostor == 1 )
-            if ( value.died )
-                $("#killPlayer").append("<option value=" + value.id + " disabled>" + colors[value.color] + " | " + value.name + "</option>");
-            else
-                $("#killPlayer").append("<option value=" + value.id + ">" + colors[value.color] + " | " + value.name + "</option>");
+            if ( value.is_impostor !== 1 ) {
+                if ( value.died )
+                    $("#killPlayer").append("<option value=" + value.id + " disabled>" + colors[value.color] + " | " + value.name + "</option>");
+                else
+                    $("#killPlayer").append("<option value=" + value.id + ">" + colors[value.color] + " | " + value.name + "</option>");
+            }
         });
     }
 });
@@ -558,11 +559,12 @@ impostor.change(function() {
                         $("#killPlayer").append("<option selected disabled>Убить игрока</option>");
                         let gameStatus = localStorage.getItem('amongus-gameStatus');
                         $.each(data, function( index, value ) {
-                          if (! value.is_impostor == 1 )
-                            if ( value.died )
-                                $("#killPlayer").append("<option value=" + value.id + " disabled>" + colors[value.color] + " | " + value.name + "</option>");
-                            else
-                                $("#killPlayer").append("<option value=" + value.id + ">" + colors[value.color] + " | " + value.name + "</option>");
+                          if ( value.is_impostor !== 1 ) {
+                              if ( value.died )
+                                  $("#killPlayer").append("<option value=" + value.id + " disabled>" + colors[value.color] + " | " + value.name + "</option>");
+                              else
+                                  $("#killPlayer").append("<option value=" + value.id + ">" + colors[value.color] + " | " + value.name + "</option>");
+                          }
                         });
                     }
                 });

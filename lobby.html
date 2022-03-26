@@ -201,7 +201,7 @@ sosButton.click(function (event) {
                 sosButton.text(_Seconds);
             } else {
                 jQuery(sosButton).removeClass("pause");
-                clearInterval(int); // очищаем интервал, чтобы он не продолжал работу при _Seconds = 0
+                clearInterval(int);
                 sosButton.text("Экстренное совещание");
             }
             }, 1000);
@@ -501,7 +501,7 @@ impostor.change(function() {
                     livePlayers.push(value);
             });
 
-            // если осталось 2 и меньше игрока
+            // если осталось меньше 2 игроков
             if ( livePlayers.length < 2 ) {
                 var formData = {
                     lobbyID: lobbyID,

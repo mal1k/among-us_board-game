@@ -152,3 +152,9 @@ button:active {
         overflow-y: auto;
     }
 }
+
+@media (max-width: 368px) {
+    #sosButton {
+        padding: 8px 20px !important;
+    }
+}

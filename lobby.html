@@ -95,6 +95,7 @@ var colors = {
     11: 'Черный',
     12: 'Белый'
 }
+
 $("#gameCode").text(lobbyID);
 $("#lobbyName").text(gameName);
 
@@ -295,7 +296,6 @@ function fetchdata(){
                 player.show();
                 $("#tasksText").text('Игра завершена');
                 $("#playerTasksList").empty();
-                $("#gameCode").text('');
             }
 
             localStorage.setItem('amongus-gameStatus', data.started);
@@ -436,8 +436,9 @@ function fetchdata(){
 
 }
 
-setTimeout(fetchdata,0);
-
+$(document).ready(function(){
+    setTimeout(fetchdata,0);
+});
 
 // impostor kill button
 var formData = {

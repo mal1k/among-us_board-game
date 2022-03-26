@@ -393,17 +393,7 @@ function fetchdata(){
                                         url: "http://api.board-game.space/api/among-us/send-telegram",
                                         data: formData,
                                         dataType: "json",
-                                        encode: true,
-
-                                        success: function(data){
-                                            $("#playerTasksList").empty();
-                                            startGameButton.hide();
-                                            $("#impostorSection").hide();
-                                            $("#waitTillStartSection").hide();
-                                            $("#playerTaskSection").show();
-                                            $("#tasksText").text('Игра завершена');
-                                            $("#gameCode").text('');
-                                        }
+                                        encode: true
                                     });
 
                                     var formData = {

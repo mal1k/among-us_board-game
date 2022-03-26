@@ -342,9 +342,9 @@ function fetchdata(){
         encode: true,
 
         success: function(data){
-            if ( $.isArray(data) ) {
+            if ( $.isArray(data.tasks) ) {
                 $("#playerTasksList").empty();
-                $.each(data, function( index, value ) {
+                $.each(data.tasks, function( index, value ) {
                         if ( value.done )
                             $("#playerTasksList").append("<li style='color: rgb(5, 165, 5);'>" + value.task + "</li>");
                         else
@@ -366,7 +366,7 @@ function fetchdata(){
                 encode: true,
 
                 success: function(data){
-                var progressBar = Math.round(data);
+                var progressBar = Math.round(data.progressBar);
                 if ( progressBar > 0 ) {
                     $("#greenBar").width(progressBar + '%');
                     $("#greenBar").text(progressBar + '%');

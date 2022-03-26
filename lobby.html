@@ -67,6 +67,7 @@
     <button id="startGame" style="background: rgb(5, 165, 5);">Начать игру</button>
     
     <button id="lobbyLogout" style="margin-top: 10px; font-size: 16px;">Выйти из игры</button>
+    <a id="lobbyLogoutAfterGame" style="display: none; margin-top: 10px; font-size: 16px;">Выйти из игры</a>
 </section>
 
 <script>
@@ -283,10 +284,6 @@ function fetchdata(){
                 player.hide();
             }
             
-            if ( data.started == 1 ) {
-                console.log( 'started' );
-            }
-
             if ( data.started == 2 ) {
                 gameCodeParagraph.hide();
                 startGameButton.hide();
@@ -296,6 +293,8 @@ function fetchdata(){
                 player.show();
                 $("#tasksText").text('Игра завершена');
                 $("#playerTasksList").empty();
+                $("#lobbyLogout").hide();
+                $("#lobbyLogoutAfterGame").show();
             }
 
             localStorage.setItem('amongus-gameStatus', data.started);

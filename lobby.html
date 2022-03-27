@@ -416,14 +416,15 @@ function fetchdata(){
                     }
                 }
                 },
-                complete:function(data){
-                setTimeout(fetchdata,1000);
-                }
+                // complete:function(data){
+                // setTimeout(fetchdata,1000);
+                // }
             });
 
         }
     });
 
+setTimeout(fetchdata,1000);
 }
 
 $(document).ready(function(){

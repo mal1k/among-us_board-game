@@ -278,6 +278,8 @@ function fetchdata(){
 
         success: function(data){
             if ( data.started == null ) {
+                $("#lobbyLogout").show();
+                $("#lobbyLogoutAfterGame").hide();
                 gameCodeParagraph.show();
                 startGameButton.show();
                 notStarted.show();
